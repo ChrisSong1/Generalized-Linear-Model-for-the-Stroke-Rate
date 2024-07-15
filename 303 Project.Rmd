@@ -1,0 +1,276 @@
+---
+title: "R Notebook"
+output: html_notebook
+---
+```{r}
+#Install the question data
+install.packages("astsa")
+library(astsa)
+```
+```{r}
+plot(salt)
+```
+```{r}
+sal.per = mvspec(salt, log="no")
+abline(v =1/16, lty = 2)
+which.max(sal.per$spec)
+```
+```{r}
+Lower = qchisq(0.975, 2)
+Upper = qchisq(0.025, 2)
+
+
+2*sal.per$spec[4]/Lower
+2*sal.per$spec[4]/Upper
+```
+
+```{r}
+P <- sal.per$details[order(sal.per$details[,3], decreasing = TRUE),]
+
+P[1,]
+
+
+P[2,]
+```
+
+
+
+```{r}
+plot(saltemp)
+```
+
+
+
+```{r}
+tem.per = mvspec(saltemp, log="no")
+abline(v =1/16, lty = 2)
+which.max(tem.per$spec)
+```
+
+
+```{r}
+L = qchisq(0.975, 2)
+U = qchisq(0.025, 2)
+
+
+2*tem.per$spec[4]/L
+2*tem.per$spec[4]/U
+```
+
+```{r}
+P <- tem.per$details[order(tem.per$details[,3], decreasing = TRUE),]
+
+P[1,]
+
+
+P[2,]
+```
+
+
+
+
+```{r}
+t = 1:100
+x1 = 2*cos(2*pi*0.06*t) + 3*sin(2*pi*0.06*t)
+x2 = 4*cos(2*pi*0.1*t) + 5*sin(2*pi*0.1*t)
+x3 = 6*cos(2*pi*0.4*t) + 7*sin(2*pi*0.4*t)
+
+xt = x1+x2+x3
+```
+
+```{r}
+plot.ts(x1, ylim = c(-10, 10), main = "frequency = 6/100, ampˆ2 = 13")
+plot.ts(x2, ylim = c(-10, 10), main = "frequency = 10/100, ampˆ2 = 41")
+plot.ts(x3, ylim = c(-16, 16), main = "frequency = 40/100, ampˆ2 = 85")
+
+plot.ts(xt, ylim = c(-16, 16), main = "xt")
+```
+```{r}
+Perio = Mod(2*fft(xt)/100)^2
+Fr = 0:99/100
+plot(Fr, Perio, type="o", xlab="Frequency", ylab="Periodogram")
+```
+
+
+
+```{r}
+w = rnorm(100, 0, 5)
+xt_new = xt1 + xt2+ xt3 + w
+plot.ts(x1, ylim = c(-10, 10), main = "frequency = 6/100, ampˆ2 = 13")
+plot.ts(x2, ylim = c(-10, 10), main = "frequency = 10/100, ampˆ2 = 41")
+plot.ts(x3, ylim = c(-16, 16), main = "frequency = 40/100, ampˆ2 = 85")
+
+plot.ts(xt_new, ylim = c(-16, 16), main = "xt new")
+```
+
+```{r}
+Perio_new = Mod(2*fft(xt_new)/100)^2
+Fr = 0:99/100
+plot(Fr, Perio_new, type = "o", xlab ="frequency", ylab ="scaled periodogram") 
+abline(v = 1/2, lty = 2)
+```
+
+
+
+
+
+
+```{r}
+plot(sunspotz)
+```
+
+
+
+
+
+
+```{r}
+sun.per = mvspec(sunspotz, taper = 0, log="no")
+abline(v = 92/1000, lty = 2)
+```
+
+
+
+```{r}
+which.max(sun.per$spec)
+
+
+lower = qchisq(0.975, 2)
+upper = qchisq(0.025, 2)
+
+lower
+upper
+
+
+2*sun.per$spec[22]/lower
+2*sun.per$spec[22]/upper
+```
+```{r}
+P <- sun.per$details[order(sun.per$details[,3], decreasing = TRUE),]
+
+P[1,]
+
+
+P[2,]
+```
+
+
+
+
+
+
+```{r}
+nextn(459)
+
+l = 2*7+1
+l
+
+B = l/nextn(459)*2
+B
+
+sun.ave = mvspec(sunspotz, kernel('daniell',7), log='no')
+
+sun.ave$bandwidth
+```
+
+
+
+
+```{r}
+n = which.max(sun.ave$spec)
+
+
+lower1 = qchisq(0.975, 2*l)
+upper1 = qchisq(0.025, 2*l)
+
+lower1
+upper1
+
+sun.ave$spec[n]
+
+
+2*l*sun.ave$spec[n]/lower1
+2*l*sun.ave$spec[n]/upper1
+```
+
+```{r}
+P <- sun.ave$details[order(sun.ave$details[,3], decreasing = TRUE),]
+
+P[1,]
+
+
+P[2,]
+```
+
+
+
+
+
+```{r}
+fdchicken = diff(chicken)
+
+fdchicken.per = mvspec(fdchicken, log = "no")
+
+abline(v=1, lty=2)
+```
+
+```{r}
+l = 3
+# l = 2m+1 
+m = 1
+
+fdchicken.ave = mvspec(fdchicken, kernel('daniell', 1), log ="no")
+abline(v = 1, lty = 2)
+```
+```{r}
+which.max(fdchicken.per$spec)
+```
+```{r}
+fdchicken.per$spec[15]
+
+fdchicken.ave$spec[15]
+
+```
+```{r}
+lower = qchisq(0.025, 6)
+upper = qchisq(0.975, 6)
+
+lower
+upper
+```
+
+
+
+```{r}
+L = 3
+
+
+
+upper_bound = 2*L *(fdchicken.ave$spec[15])/(upper)
+
+lower_bound = 2*L *(fdchicken.ave$spec[15])/(lower)
+
+
+upper_bound
+
+lower_bound
+
+
+```
+```{r}
+L = 3
+X = 2L
+
+X
+
+```
+
+
+
+
+
+
+
+
+
+
